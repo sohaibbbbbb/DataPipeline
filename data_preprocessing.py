@@ -1,5 +1,6 @@
 import pandas as pd
 import logging
+import joblib
 from typing import List, Optional
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
@@ -127,11 +128,14 @@ class DataPipelineProcessor:
         return self.build_and_train_pipeline()
 
 if __name__ == "__main__":
-    processor = DataPipelineProcessor(
-        file_path='raw_data.csv', 
-         target_column='label', 
-         date_columns=['transaction_date'],
-         group_col='city'  
-         )
-    trained_pipeline = processor.run()
+   processor = DataPipelineProcessor(
+    file_path='raw_data.csv', 
+    target_column='label', 
+    date_columns=['transaction_date'],
+    group_col='city'
+    )
+trained_pipeline = processor.run(save_path="production_pipeline.pkl")
+    
+loaded_model = joblib.load("production_pipeline.pkl")
+predictions = loaded_model.predict("")
 pass
