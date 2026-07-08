@@ -1,6 +1,7 @@
 import pandas as pd
 import logging
 import joblib
+import time
 from typing import List, Optional
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
@@ -121,12 +122,23 @@ class DataPipelineProcessor:
         
         return self.model_pipeline
 
-    def run(self) -> Pipeline:
+    def run(self, save_path: Optional[str] = "model_pipeline.pkl") -> Pipeline:
+        logging.info("Starting pipeline execution...")
+        start_time: float = time.perf_counter()
+        
         self.load_data()
         self.clean_commas()
         self.engineer_group_features()
-        return self.build_and_train_pipeline()
-
+        self.build_and_train_pipeline()
+        
+        if save_path:
+            self.save_pipeline(save_path)
+            
+        end_time: float = time.perf_counter()
+        execution_duration: float = end_time - start_time
+        
+        logging.info(f"Pipeline execution completed in {execution_duration:.4f} seconds.")
+        return self.model_pipeline
 if __name__ == "__main__":
    processor = DataPipelineProcessor(
     file_path='raw_data.csv', 
